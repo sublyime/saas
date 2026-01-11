@@ -89,3 +89,15 @@ export interface JwtPayload {
   iat?: number;
   exp?: number;
 }
+// Express Request extensions
+import { Request } from 'express';
+
+export interface AuthenticatedRequest extends Request {
+  userId?: string;
+  organizationId?: string;
+  userRole?: string;
+}
+
+export interface MulterRequest extends AuthenticatedRequest {
+  file?: Express.Multer.File;
+}

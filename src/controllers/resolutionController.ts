@@ -16,10 +16,11 @@ const correlateIncidentsSchema = z.object({
 /**
  * Generate AI-powered resolution for incident
  */
-export const generateResolution = async (req: Request, res: Response) => {
+export const generateResolution = async (req: Request, res: Response): Promise<void> => {
   try {
     if (!req.organizationId) {
-      return res.status(401).json({ error: 'Authentication required' });
+      res.status(401).json({ error: 'Authentication required' });
+      return;
     }
 
     const { id } = req.params;
@@ -28,16 +29,18 @@ export const generateResolution = async (req: Request, res: Response) => {
     // Verify incident exists
     const incident = await incidentService.findIncidentById(id, req.organizationId);
     if (!incident) {
-      return res.status(404).json({ error: 'Incident not found' });
+      res.status(404).json({ error: 'Incident not found' });
+      return;
     }
 
     // Check if AI is configured
     if (!aiService.isConfigured()) {
-      return res.status(503).json({
+      res.status(503).json({
         error: 'AI service not configured',
         message: 'No AI provider has been configured. Please set up OpenAI, Anthropic, or Ollama.',
         availableProviders: aiService.getAvailableProviders(),
       });
+      return;
     }
 
     const resolution = await resolutionService.generateAIResolution(
@@ -49,7 +52,8 @@ export const generateResolution = async (req: Request, res: Response) => {
     res.status(201).json(resolution);
   } catch (error: any) {
     if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: 'Invalid input', details: error.errors });
+      res.status(400).json({ error: 'Invalid input', details: error.errors });
+      return;
     }
 
     logger.error('Generate resolution error:', error);
@@ -60,7 +64,7 @@ export const generateResolution = async (req: Request, res: Response) => {
 /**
  * Get AI provider status
  */
-export const getAIStatus = async (req: Request, res: Response) => {
+export const getAIStatus = async (_req: Request, res: Response): Promise<void> => {
   try {
     const activeProvider = aiService.getActiveProvider();
     const availableProviders = aiService.getAvailableProviders();
@@ -84,10 +88,11 @@ export const getAIStatus = async (req: Request, res: Response) => {
 /**
  * Set active AI provider
  */
-export const setAIProvider = async (req: Request, res: Response) => {
+export const setAIProvider = async (req: Request, res: Response): Promise<void> => {
   try {
     if (!req.organizationId) {
-      return res.status(401).json({ error: 'Authentication required' });
+      res.status(401).json({ error: 'Authentication required' });
+      return;
     }
 
     const schema = z.object({
@@ -98,7 +103,8 @@ export const setAIProvider = async (req: Request, res: Response) => {
 
     // Only admins can change AI provider settings
     if (req.user?.role !== 'admin') {
-      return res.status(403).json({ error: 'Only admins can change AI provider' });
+      res.status(403).json({ error: 'Only admins can change AI provider' });
+      return;
     }
 
     aiService.setProvider(validated.provider);
@@ -112,7 +118,8 @@ export const setAIProvider = async (req: Request, res: Response) => {
     });
   } catch (error: any) {
     if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: 'Invalid input', details: error.errors });
+      res.status(400).json({ error: 'Invalid input', details: error.errors });
+      return;
     }
 
     logger.error('Set AI provider error:', error);
@@ -123,10 +130,11 @@ export const setAIProvider = async (req: Request, res: Response) => {
 /**
  * Find correlated incidents
  */
-export const findCorrelatedIncidents = async (req: Request, res: Response) => {
+export const findCorrelatedIncidents = async (req: Request, res: Response): Promise<void> => {
   try {
     if (!req.organizationId) {
-      return res.status(401).json({ error: 'Authentication required' });
+      res.status(401).json({ error: 'Authentication required' });
+      return;
     }
 
     const { id } = req.params;
@@ -135,7 +143,8 @@ export const findCorrelatedIncidents = async (req: Request, res: Response) => {
     // Verify incident exists
     const incident = await incidentService.findIncidentById(id, req.organizationId);
     if (!incident) {
-      return res.status(404).json({ error: 'Incident not found' });
+      res.status(404).json({ error: 'Incident not found' });
+      return;
     }
 
     const correlatedIncidents = await resolutionService.correlateIncidents(
@@ -151,7 +160,8 @@ export const findCorrelatedIncidents = async (req: Request, res: Response) => {
     });
   } catch (error: any) {
     if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: 'Invalid input', details: error.errors });
+      res.status(400).json({ error: 'Invalid input', details: error.errors });
+      return;
     }
 
     logger.error('Find correlated incidents error:', error);

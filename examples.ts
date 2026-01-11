@@ -6,6 +6,7 @@
 
 import { aiService } from './src/services/ai';
 import { generateAIResolution, correlateIncidents } from './src/services/resolutionService';
+import { AIServiceFactory } from './src/services/ai/factory';
 
 /**
  * Example 1: Check AI Service Status
@@ -81,7 +82,7 @@ async function generateTextExample() {
  * Example 5: Context-Based Generation
  */
 async function generateWithContextExample() {
-  const messages = [
+  const messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [
     {
       role: 'system',
       content: 'You are an expert incident resolution assistant.',
@@ -145,9 +146,7 @@ async function multiProviderExample(incidentId: string, orgId: string) {
  * Example 8: AI Service Factory - Advanced Usage
  */
 async function factoryExample() {
-  import { getAIServiceFactory } from './src/services/ai/factory';
-
-  const factory = getAIServiceFactory();
+  const factory = new AIServiceFactory();
 
   // Get specific provider
   const openai = factory.getProvider('openai');

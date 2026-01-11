@@ -10,12 +10,13 @@ export const apiKeyAuthMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
     const apiKey = req.headers['x-api-key'] as string;
 
     if (!apiKey) {
-      return res.status(401).json({ error: 'Missing API key' });
+      res.status(401).json({ error: 'Missing API key' });
+      return;
     }
 
     // Find the API key in database
@@ -27,13 +28,15 @@ export const apiKeyAuthMiddleware = async (
     );
 
     if (result.rows.length === 0) {
-      return res.status(401).json({ error: 'Invalid API key' });
+      res.status(401).json({ error: 'Invalid API key' });
+      return;
     }
 
     const keyRecord = result.rows[0];
 
     if (!verifyApiKey(apiKey, keyRecord.key_hash)) {
-      return res.status(401).json({ error: 'Invalid API key' });
+      res.status(401).json({ error: 'Invalid API key' });
+      return;
     }
 
     // Update last used timestamp
@@ -43,9 +46,10 @@ export const apiKeyAuthMiddleware = async (
     );
 
     req.organizationId = keyRecord.org_id;
-    next();
+    return next();
   } catch (error) {
     logger.error('API key auth middleware error:', error);
     res.status(500).json({ error: 'Internal server error' });
+    return;
   }
 };

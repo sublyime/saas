@@ -2,6 +2,8 @@
 
 Modern SaaS platform for automated incident resolution using multimodal data ingestion, AI-powered analysis, and enterprise-grade security.
 
+> **v1.0.1 Released** - All TypeScript compilation errors fixed, full type safety achieved ✅
+
 ## Features
 
 - **Multimodal Incident Ingestion**: Upload logs, error traces, screenshots, PDFs, and text documents
@@ -14,11 +16,12 @@ Modern SaaS platform for automated incident resolution using multimodal data ing
 - **Audit Trails**: Complete logging of all user actions
 - **Incident Correlation**: Find similar incidents using multimodal data
 - **AI Provider Flexibility**: Switch between LLM providers at runtime
+- **Type-Safe**: Full TypeScript with strict mode enabled
 
 ## Tech Stack
 
 - **Runtime**: Node.js 20+
-- **Language**: TypeScript
+- **Language**: TypeScript 5.3+ (Strict Mode)
 - **Framework**: Express.js
 - **Database**: PostgreSQL 16+
 - **Auth**: JWT + bcryptjs

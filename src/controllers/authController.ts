@@ -22,7 +22,7 @@ const signupSchema = z.object({
 /**
  * Login controller
  */
-export const login = async (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const validated = loginSchema.parse(req.body);
 
@@ -32,7 +32,8 @@ export const login = async (req: Request, res: Response) => {
     );
 
     if (!user) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      res.status(401).json({ error: 'Invalid credentials' });
+      return;
     }
 
     const token = generateToken({
@@ -53,7 +54,8 @@ export const login = async (req: Request, res: Response) => {
     });
   } catch (error: any) {
     if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: 'Invalid input', details: error.errors });
+      res.status(400).json({ error: 'Invalid input', details: error.errors });
+      return;
     }
 
     logger.error('Login error:', error);
@@ -64,14 +66,15 @@ export const login = async (req: Request, res: Response) => {
 /**
  * Signup controller
  */
-export const signup = async (req: Request, res: Response) => {
+export const signup = async (req: Request, res: Response): Promise<void> => {
   try {
     const validated = signupSchema.parse(req.body);
 
     // Check if user already exists
     const existing = await userService.findUserByEmail(validated.email);
     if (existing) {
-      return res.status(409).json({ error: 'Email already registered' });
+      res.status(409).json({ error: 'Email already registered' });
+      return;
     }
 
     const user = await userService.createUser(
@@ -100,7 +103,8 @@ export const signup = async (req: Request, res: Response) => {
     });
   } catch (error: any) {
     if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: 'Invalid input', details: error.errors });
+      res.status(400).json({ error: 'Invalid input', details: error.errors });
+      return;
     }
 
     logger.error('Signup error:', error);
@@ -111,16 +115,18 @@ export const signup = async (req: Request, res: Response) => {
 /**
  * Get current user
  */
-export const getCurrentUser = async (req: Request, res: Response) => {
+export const getCurrentUser = async (req: Request, res: Response): Promise<void> => {
   try {
     if (!req.userId) {
-      return res.status(401).json({ error: 'User not authenticated' });
+      res.status(401).json({ error: 'User not authenticated' });
+      return;
     }
 
     const user = await userService.findUserById(req.userId);
 
     if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+      res.status(404).json({ error: 'User not found' });
+      return;
     }
 
     res.json({
@@ -139,10 +145,11 @@ export const getCurrentUser = async (req: Request, res: Response) => {
 /**
  * Update user profile
  */
-export const updateProfile = async (req: Request, res: Response) => {
+export const updateProfile = async (req: Request, res: Response): Promise<void> => {
   try {
     if (!req.userId) {
-      return res.status(401).json({ error: 'User not authenticated' });
+      res.status(401).json({ error: 'User not authenticated' });
+      return;
     }
 
     const updateSchema = z.object({
@@ -162,7 +169,8 @@ export const updateProfile = async (req: Request, res: Response) => {
     });
   } catch (error: any) {
     if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: 'Invalid input', details: error.errors });
+      res.status(400).json({ error: 'Invalid input', details: error.errors });
+      return;
     }
 
     logger.error('Update profile error:', error);

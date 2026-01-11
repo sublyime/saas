@@ -3,7 +3,6 @@ import { IncidentArtifact } from '../types';
 import { generateId } from '../utils/security';
 import { logger } from '../config/logger';
 import fs from 'fs/promises';
-import path from 'path';
 
 /**
  * Create incident artifact record

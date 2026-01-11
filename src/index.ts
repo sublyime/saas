@@ -6,7 +6,8 @@ import { logger } from './config/logger';
 import config from './config';
 import { initDatabase, closeDatabase } from './database/connection';
 import { initializeTables } from './database/schema';
-import { auditMiddleware, errorHandler, notFoundHandler } from './middleware/errorHandler';
+import { auditMiddleware } from './middleware/audit';
+import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import authRoutes from './routes/authRoutes';
 import incidentRoutes from './routes/incidentRoutes';
 import resolutionRoutes from './routes/resolutionRoutes';
@@ -47,7 +48,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 // Request logging
-app.use((req, res, next) => {
+app.use((req, _res, next) => {
   logger.info(`${req.method} ${req.path}`);
   next();
 });

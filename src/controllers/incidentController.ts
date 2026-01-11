@@ -21,10 +21,11 @@ const updateIncidentSchema = z.object({
 /**
  * Create incident
  */
-export const createIncident = async (req: Request, res: Response) => {
+export const createIncident = async (req: Request, res: Response): Promise<void> => {
   try {
     if (!req.organizationId || !req.userId) {
-      return res.status(401).json({ error: 'Authentication required' });
+      res.status(401).json({ error: 'Authentication required' });
+      return;
     }
 
     const validated = createIncidentSchema.parse(req.body);
@@ -40,7 +41,8 @@ export const createIncident = async (req: Request, res: Response) => {
     res.status(201).json(incident);
   } catch (error: any) {
     if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: 'Invalid input', details: error.errors });
+      res.status(400).json({ error: 'Invalid input', details: error.errors });
+      return;
     }
 
     logger.error('Create incident error:', error);
@@ -51,17 +53,19 @@ export const createIncident = async (req: Request, res: Response) => {
 /**
  * Get incident
  */
-export const getIncident = async (req: Request, res: Response) => {
+export const getIncident = async (req: Request, res: Response): Promise<void> => {
   try {
     if (!req.organizationId) {
-      return res.status(401).json({ error: 'Authentication required' });
+      res.status(401).json({ error: 'Authentication required' });
+      return;
     }
 
     const { id } = req.params;
     const incident = await incidentService.findIncidentById(id, req.organizationId);
 
     if (!incident) {
-      return res.status(404).json({ error: 'Incident not found' });
+      res.status(404).json({ error: 'Incident not found' });
+      return;
     }
 
     // Get artifacts and resolutions
@@ -82,10 +86,11 @@ export const getIncident = async (req: Request, res: Response) => {
 /**
  * List incidents
  */
-export const listIncidents = async (req: Request, res: Response) => {
+export const listIncidents = async (req: Request, res: Response): Promise<void> => {
   try {
     if (!req.organizationId) {
-      return res.status(401).json({ error: 'Authentication required' });
+      res.status(401).json({ error: 'Authentication required' });
+      return;
     }
 
     const { status, severity, limit = '50', offset = '0' } = req.query;
@@ -115,10 +120,11 @@ export const listIncidents = async (req: Request, res: Response) => {
 /**
  * Update incident
  */
-export const updateIncident = async (req: Request, res: Response) => {
+export const updateIncident = async (req: Request, res: Response): Promise<void> => {
   try {
     if (!req.organizationId) {
-      return res.status(401).json({ error: 'Authentication required' });
+      res.status(401).json({ error: 'Authentication required' });
+      return;
     }
 
     const { id } = req.params;
@@ -133,11 +139,13 @@ export const updateIncident = async (req: Request, res: Response) => {
     res.json(incident);
   } catch (error: any) {
     if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: 'Invalid input', details: error.errors });
+      res.status(400).json({ error: 'Invalid input', details: error.errors });
+      return;
     }
 
     if (error.message === 'Incident not found') {
-      return res.status(404).json({ error: 'Incident not found' });
+      res.status(404).json({ error: 'Incident not found' });
+      return;
     }
 
     logger.error('Update incident error:', error);

@@ -20,29 +20,32 @@ export const authMiddleware = (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): void => {
   try {
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ error: 'Missing or invalid authorization header' });
+      res.status(401).json({ error: 'Missing or invalid authorization header' });
+      return;
     }
 
     const token = authHeader.substring(7);
     const payload = verifyToken(token);
 
     if (!payload) {
-      return res.status(401).json({ error: 'Invalid or expired token' });
+      res.status(401).json({ error: 'Invalid or expired token' });
+      return;
     }
 
     req.user = payload;
     req.userId = payload.sub;
     req.organizationId = payload.org;
 
-    next();
+    return next();
   } catch (error) {
     logger.error('Auth middleware error:', error);
     res.status(500).json({ error: 'Internal server error' });
+    return;
   }
 };
 
@@ -50,16 +53,18 @@ export const authMiddleware = (
  * Role-based access control middleware
  */
 export const rbacMiddleware = (allowedRoles: string[]) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response, next: NextFunction): void => {
     if (!req.user) {
-      return res.status(401).json({ error: 'User not authenticated' });
+      res.status(401).json({ error: 'User not authenticated' });
+      return;
     }
 
     if (!allowedRoles.includes(req.user.role)) {
-      return res.status(403).json({ error: 'Insufficient permissions' });
+      res.status(403).json({ error: 'Insufficient permissions' });
+      return;
     }
 
-    next();
+    return next();
   };
 };
 
@@ -68,7 +73,8 @@ export const rbacMiddleware = (allowedRoles: string[]) => {
  */
 export const organizationMiddleware = (req: Request, res: Response, next: NextFunction) => {
   if (!req.organizationId) {
-    return res.status(401).json({ error: 'Organization context not found' });
+    res.status(401).json({ error: 'Organization context not found' });
+    return;
   }
 
   next();

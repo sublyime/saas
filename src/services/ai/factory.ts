@@ -1,10 +1,10 @@
 import { logger } from '../../config/logger';
-import { AIProvider, AIProviderType } from '../types';
+import { AIProvider, AIProviderType } from './types';
 import {
   OpenAIProvider,
   AnthropicProvider,
   OllamaProvider,
-} from './implementations';
+} from './providers/implementations';
 
 /**
  * AI Service Factory - manages provider selection and initialization

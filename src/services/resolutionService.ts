@@ -1,5 +1,4 @@
 import { query } from '../database/connection';
-import { IncidentArtifact } from '../types';
 import { generateId } from '../utils/security';
 import { logger } from '../config/logger';
 import { aiService } from './ai';

@@ -25,6 +25,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## v1.0.1 - 2026-01-11
+
+### Fixed
+
+#### TypeScript & Type Safety
+- Fixed all middleware functions to properly declare return types (`void` for sync, `Promise<void>` for async)
+- Fixed "Not all code paths return a value" errors by separating response calls from return statements
+- Removed unused imports from `resolutionService.ts` (IncidentArtifact) and `artifactService.ts` (path)
+- Added explicit type casting for dynamic property access in config validation
+- Fixed tsconfig.json deprecation warning by adding `"ignoreDeprecations": "6.0"` for node10 module resolution
+
+#### Middleware & Controllers
+- **auth.ts**: Fixed response handling in authMiddleware, rbacMiddleware, and organizationMiddleware
+- **apiAuth.ts**: Added Promise<void> return type and proper response separation for apiKeyAuthMiddleware
+- **resolutionController.ts**: Fixed Promise<void> return types on generateResolution, getAIStatus, setAIProvider, and findCorrelatedIncidents
+- **examples.ts**: Fixed malformed factoryExample function with stray code
+
+#### Configuration
+- Enhanced config validation with proper type safety for nested object access
+- Improved error handling in environment variable validation
+
+---
+
 ## v1.0.0 - 2026-01-11
 
 ### Added (Initial Release)

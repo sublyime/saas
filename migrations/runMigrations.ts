@@ -9,8 +9,8 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { initDatabase, closeDatabase, query } from '../database/connection.js';
-import logger from '../config/logger.js';
+import { initDatabase, closeDatabase, query } from '../src/database/connection';
+import { logger } from '../src/config/logger';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

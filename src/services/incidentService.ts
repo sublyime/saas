@@ -109,7 +109,14 @@ export const updateIncident = async (
     .map((field, index) => `${field} = $${index + 1}`)
     .join(', ');
 
-  const values = updateFields.map((field) => updates[field as keyof Incident]);
+  const values: (string | number | boolean | null | undefined)[] = updateFields.map((field) => {
+    const value = updates[field as keyof Incident];
+    // Convert Date to ISO string if necessary
+    if (value instanceof Date) {
+      return value.toISOString();
+    }
+    return value;
+  });
   values.push(incidentId);
   values.push(organizationId);
 

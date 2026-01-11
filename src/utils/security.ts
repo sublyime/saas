@@ -27,10 +27,14 @@ export const verifyPassword = async (
  * Generate JWT token
  */
 export const generateToken = (payload: JwtPayload): string => {
-  return jwt.sign(payload, config.security.jwtSecret, {
+  const secret = config.security.jwtSecret;
+  if (!secret) {
+    throw new Error('JWT_SECRET is not configured');
+  }
+  return jwt.sign(payload, secret, {
     expiresIn: config.security.jwtExpiresIn,
     algorithm: 'HS256',
-  });
+  } as jwt.SignOptions);
 };
 
 /**

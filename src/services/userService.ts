@@ -1,8 +1,7 @@
-import { query, transaction, queryWithClient } from '../database/connection';
+import { query } from '../database/connection';
 import { User } from '../types';
 import { generateId, hashPassword, verifyPassword } from '../utils/security';
 import { logger } from '../config/logger';
-import { PoolClient } from 'pg';
 
 /**
  * Create a new user
@@ -101,7 +100,14 @@ export const updateUser = async (
     .map((field, index) => `${field} = $${index + 1}`)
     .join(', ');
 
-  const values = updateFields.map((field) => updates[field as keyof User]);
+  const values: (string | boolean | number | null | undefined)[] = updateFields.map((field) => {
+    const value = updates[field as keyof User];
+    // Convert Date to ISO string if necessary
+    if (value instanceof Date) {
+      return value.toISOString();
+    }
+    return value;
+  });
   values.push(userId);
 
   const result = await query(

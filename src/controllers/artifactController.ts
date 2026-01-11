@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { MulterRequest } from '../types';
 import * as artifactService from '../services/artifactService';
 import { logger } from '../config/logger';
 import { v4 as uuidv4 } from 'uuid';
@@ -8,16 +9,18 @@ import fs from 'fs/promises';
 /**
  * Upload artifact to incident
  */
-export const uploadArtifact = async (req: Request, res: Response) => {
+export const uploadArtifact = async (req: MulterRequest, res: Response): Promise<void> => {
   try {
     if (!req.organizationId || !req.file) {
-      return res.status(400).json({ error: 'File and incident ID required' });
+      res.status(400).json({ error: 'File and incident ID required' });
+      return;
     }
 
     const { incidentId } = req.params;
 
     if (!incidentId) {
-      return res.status(400).json({ error: 'Incident ID required' });
+      res.status(400).json({ error: 'Incident ID required' });
+      return;
     }
 
     // Generate safe filename
@@ -81,12 +84,13 @@ export const uploadArtifact = async (req: Request, res: Response) => {
 /**
  * Get incident artifacts
  */
-export const getArtifacts = async (req: Request, res: Response) => {
+export const getArtifacts = async (req: Request, res: Response): Promise<void> => {
   try {
     const { incidentId } = req.params;
 
     if (!incidentId) {
-      return res.status(400).json({ error: 'Incident ID required' });
+      res.status(400).json({ error: 'Incident ID required' });
+      return;
     }
 
     const artifacts = await artifactService.getIncidentArtifacts(incidentId);
@@ -101,12 +105,13 @@ export const getArtifacts = async (req: Request, res: Response) => {
 /**
  * Delete artifact
  */
-export const deleteArtifact = async (req: Request, res: Response) => {
+export const deleteArtifact = async (req: Request, res: Response): Promise<void> => {
   try {
     const { artifactId } = req.params;
 
     if (!artifactId) {
-      return res.status(400).json({ error: 'Artifact ID required' });
+      res.status(400).json({ error: 'Artifact ID required' });
+      return;
     }
 
     await artifactService.deleteArtifact(artifactId);

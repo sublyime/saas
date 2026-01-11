@@ -81,7 +81,7 @@ const validateConfig = () => {
 
   for (const key of required) {
     const [section, field] = key.split('.');
-    const value = config[section as keyof typeof config][
+    const value = (config[section as keyof typeof config] as any)[
       field as any
     ];
 

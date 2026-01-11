@@ -1,5 +1,8 @@
 # AI Platform - Quick Reference Card
 
+> **v1.0.1 - All TypeScript Errors Fixed** ✅  
+> Full type safety, proper middleware returns, optimized imports
+
 ## 🚀 5-Minute Setup
 
 ### Option A: Ollama (Recommended - Development)
