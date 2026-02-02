@@ -5,7 +5,7 @@ const router = Router();
 /**
  * Health check endpoint
  */
-router.get('/health', (req, res) => {
+router.get('/health', (_req, res) => {
   res.json({
     status: 'ok',
     timestamp: new Date().toISOString(),
@@ -16,7 +16,7 @@ router.get('/health', (req, res) => {
 /**
  * API version endpoint
  */
-router.get('/version', (req, res) => {
+router.get('/version', (_req, res) => {
   res.json({
     version: '1.0.0',
     name: 'Incident Resolver SaaS',

@@ -6,19 +6,21 @@
  * Usage: node dist/migrations/runMigrations.js
  */
 
-const fs = require('fs').promises;
+const fs = require('fs/promises');
 const path = require('path');
-const { initDatabase, closeDatabase, query } = require('../src/database/connection');
-const { logger } = require('../src/config/logger');
+const { initDatabase, closeDatabase, query } = require('../dist/database/connection');
+const { logger } = require('../dist/config/logger');
+
+const __dirname = path.dirname(require.main.filename);
 
 async function runMigrations() {
   try {
     // Initialize database connection
     await initDatabase();
 
-    // Get migration files - __dirname will be dist/migrations, so we need to go up to root
-    const migrationsDir = path.join(__dirname, '../../migrations');
-    const files = (await fs.readdir(migrationsDir)).filter((f: string) =>
+    // Get migration files
+    const migrationsDir = path.join(__dirname, '../migrations');
+    const files = (await fs.readdir(migrationsDir)).filter((f) =>
       f.endsWith('.sql')
     );
 
